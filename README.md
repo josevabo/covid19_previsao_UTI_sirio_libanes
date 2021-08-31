@@ -205,7 +205,7 @@ Os testes foram realizados utilizando processo iterativo de treinamento de vári
 
 Após estes resultados, os modelos `RandomForestClassifier` e `XGBClassifier` foram selecionados para seguir adiante.
 
-## Tuning do modelo
+## Tuning dos modelos
 
 Os modelos testados até agora foram na sua forma mais pura, sem ajustes nos seus parâmetros internos, os hiperparâmetros.
 São diversos parâmetros que variam para cada tipo de modelo. E para cada parâmetro existe um intervalo de valores possíveis. Dito isto, o ajuste e teste iterativo de cada hiperparâmetro manualmente tomaria um tempo impraticável.
@@ -226,3 +226,52 @@ Para o `RandomForestClassifier`:
  'min_samples_split': 20,
  'n_estimators': 3000}
 ```
+
+Para o `XGBClassifier`:
+
+```
+{'min_child_weight': 1, 
+'n_estimators': 400, 
+'subsample': 0.7}
+```
+
+Com estes ajustes deveríamos ter o modelo otimizado, segundo os processos de tuning que utilizamos.
+Comparando os modelos ajustados com os melhores parâmetros buscados, temos a tabela abaixo:
+
+
+| <h3>Modelo  | <h3>AUC médio |
+|:--|:--|
+|Random Forest ajustado|<b>0.7998|
+|Random Forest Default|<b>0.7971|
+|XGBoost ajustado| <b>0.7929|
+|XGBoost default| <b>0.7881|
+
+Os valores de AUC acima estão ordenados. E apesar de um pequeno ganho de performance sobre os modelos sem ajustes, o resultado ainda não é satisfatório diante do problema crítico que esse modelo deve atender.
+
+# Conclusões
+
+- Durante a análise exploratória dos dados foi percebido que alguns fatores considerados de risco amplamente divulgados são verdadeiros em nosso conjunto de dados.
+  - Doenças pré-existentes identificadas nos pacientes apresentaram alta correlação com casos de internação. Em especial a hipertensão.
+  - Um dos fatores mais relevantes para internação é a faixa etária do paciente. A taxa de internação entre pacientes já idosos foi aproximadamente o dobro da taxa para os mais jovens.
+  - Taxas fisiológicas obtidas através de exames de sangue e alguns sinais vitais também se demonstraram importantes aliados na tomada da decisão para internação ou não dos pacientes. Isto nos lembra da importância de realizar um diagnóstico mais completo logo nas primeiras horas de atenção ao paciente.
+ 
+- Após realização de testes com várias métricas, encontramos como melhores modelos os  RandomForestClassifier e XGBClassifier. 
+ 
+- Ambos tiveram resultados próximos, mas se necessário escolher apenas um, nos testes finais o modelo RandomForest se manteve décimos de percento à frente.
+ 
+- Realizado o processo de ajuste de hiperparâmetros, testamos modelos considerados ótimos em seus ajustes antes do treino. Os resultados obtidos foram pouco efetivos, em alguns momento perdendo performance quando comparados aos modelos sem ajustes.
+ 
+- Abaixo segue resumo dos resultados finais:
+ 
+| Modelo  | Score médio| AUC médio |
+|:--|:--|:--|
+|Random Forest ajustado|<b>0.7300</b>|<b>0.7998</b>|
+|Random Forest Default|<b>0.7331</b>|<b>0.7971</b>|
+|XGBoost ajustado| <b>0.7231</b>|<b>0.7929</b>|
+|XGBoost default| <b>0.7220</b>|<b>0.7881</b>|
+ 
+- Nestes resultados o modelo mais consistente foi o RandomForest ajustado. Porém, os resultados obtidos para a natureza crítica do problema ainda não são satisfatórios. 
+ 
+- Apesar das performances abaixo dos 80%, os resultados obtidos mostram um bom caminho em direção ao objetivo, pois a quantidade de registros no dataset é fator fundamental para um modelo bem treinado e capaz de gneralizar seu aprendizado para lidar com os diversos cenários possíveis em produção. Portando, com um aumento na base de dados, seja pela disponibilização pela própria equipe do hospital ou pelo aumento do conjunto de dados de outra forma, o modelo tende a ficar cada vez mais robusto e generalista. Em um cenário como este é possível que o processo de tuning dos hiperparâmetros possa apresentar resultados mais efetivos.
+ 
+- Uma sugestão para evolução deste projeto é o ajuste mais fino de hiperparâmetros em busca de melhor acurácia do modelo.
