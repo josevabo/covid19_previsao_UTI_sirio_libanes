@@ -82,8 +82,6 @@ Estas 54 características/features estão separadas em 4 subgrupos principais:
 - Resultados de exames de sangue (36): albuminas, por exemplo;
 - Sinais vitais (6): frequência cardíaca, por exemplo;
 
-O arquivo contendo os dados utilizados neste projeto se encontra no repositório deste projeto no Github (https://github.com/josevabo/covid19_previsao_UTI_sirio_libanes/blob/main/dados/Kaggle_Sirio_Libanes_ICU_Prediction.xlsx?raw=true)
-
 # Limpeza dos dados
 
 Os dados passaram por processos de limpeza conforme as etapas abaixo para garantir uma melhor normalização para posterior uso como dados de treino de um modelo de Machine Learning:
