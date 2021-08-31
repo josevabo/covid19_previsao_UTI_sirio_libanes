@@ -167,4 +167,13 @@ O grupo de doenças que apresentou maior relação com casos de internação foi
 
 # Modelagem de Machine Learning
 
-Com os dados preparados e explorados
+Com os dados preparados para treino podemos escolher nossos modelos para iniciar treino e teste de Machine Learning.
+
+Antes do treino dos modelos iniciais realizamos a separação dos dados de treino e teste para termos dados reais para testar o modelo treinado.
+
+Como o problema aqui se trata de uma classificação binária, precisamos buscar os tipos de modelos que aderem a esse tipo de classificação.
+Os modelos selecionados estão, em sua maioria, presentes na biblioteca `scikit-learn`. Inicialmente realizaremos o processo de `fitting` (treino) de cada modelo, 
+após o treino realizamos teste do modelo e comparamos suas acurácias, que é a porcentagem de classificações acertadas no teste, sendo nossa primeira métrica para mensurar os modelos.
+
+Os modelos testados inicialmente são:
+> LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, SVC, LinearSVC
