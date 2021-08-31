@@ -116,31 +116,34 @@ Após a limpeza inicial, analisamos algumas features mais livremente para vermos
 
 Para facilitar as análises montamos visualizações para cada contexto avaliado.
 
-### Taxa de internação por faixa etária (faixas de 10 em 10 anos).
+## Análise da de internação por faixas etárias
 
 ![](https://github.com/josevabo/covid19_previsao_UTI_sirio_libanes/blob/main/images/graf_age_percentil.png?raw=true)
-Observando os dados acima fica claro que há uma relação direta entre a ocorrência de internações e o aumento das faixas etárias. 
 
-### Taxa de internação entre menores e maiores de 65 anos
+Observando os dados acima é perceptível que há um aumento na taxa de internação de pacientes conforme maior a faixa etária do mesmo. Na visualização as taxas são divididas por faixas de idade de 10 em 10 anos.
+
+## Comparação de internação entre menores e maiores de 65 anos
+
 ![](https://github.com/josevabo/covid19_previsao_UTI_sirio_libanes/blob/main/images/graf_ageabove.jpg?raw=true)
 
-Como visto na comparação das taxas de internação por faixa etária, **as internações são mais frequentes para pacientes maiores de 65 anos**.
+Como visto na comparação das taxas de internação por faixa etária, as internações são mais frequentes para pacientes maiores de 65 anos.
 
-### Features com alta correlação com a ocorrência de internação
+## Features com alta correlação com a ocorrência de internação
 
-Além das features de interesse vistas acima, observamos também a ocorrência de internações para outras features que apresentaram maior correlação com marcação de internação.
+Na análise de correlação entre features do dataset pudemos listar e ordenar aquelas que possuem maior correlação com a variável objetivo, ICU.
+Com esta lista podemos observar como a distribuição destas variáveis se comporta diante das ocorrências de internação.
 
 ![](https://github.com/josevabo/covid19_previsao_UTI_sirio_libanes/blob/main/images/graf_features.png?raw=true)
 
-Acima observamos as distribuições binárias para as demais 6 features que figuraram no nosso top 10 daquelas com maior correlação com a variável ICU.
+Acima observamos as distribuições binárias para 6 features que figuraram no nosso top 10 daquelas com maior correlação com a variável ICU.
 
 A maioria delas se trata de índices obtidos em exames de sangue que para leigos não traz informação muito clara. Mas existe a **RESPIRATORY_RATE_MEAN** entre elas, relacionada à taxa de respiração do paciente, considerando apenas o nome. **Observando sua distribuição, podemos inferir que em pacientes que foram futuramente internados, é mais frequente o comportamento de uma maior taxa média de respiração que nos demais**.
 
-### Outras features de interesse
+## Outras features de interesse
 
-Algumas colunas identificadas visualmente parecem interessantes de serem analisadas a fim de conhecer sua relação com o agravamento da doença ou não.
+Após as análises anteriores, algumas colunas aparentemente de interesse do foram selecionadas arbitrariamente a fim de conhecer sua relação com o agravamento da doença ou não.
 
-As escolhi diretamente do dataset resultante da limpeza. Para sua análise, vamos adotar um olhar por dois grupos: doenças pré-existentes e dados coletados em exames.
+Para sua análise, vamos adotar um olhar por dois grupos: doenças pré-existentes e dados coletados em exames.
 
 **Doenças pré-existentes:**
 
@@ -152,7 +155,7 @@ São 7 colunas que correspondem, cada uma, a um determinado grupo de doenças n�
 
 > SAT02_ARTERIAL_MEDIAN, OXYGEN_SATURATION_MEAN
 
-Duas colunas com dados contínuos, os quais analisaremos suas distribuições entre pessoas internadas e não internadas.
+Duas colunas com dados contínuos, os quais analisamos suas distribuições entre pessoas internadas e não internadas.
 
 ![](https://github.com/josevabo/covid19_previsao_UTI_sirio_libanes/blob/main/images/graf_outras_features.png?raw=true)
 
@@ -160,7 +163,7 @@ Acima vemos o percentual de internações nos pacientes com doenças pré-existe
 
 Como esperado, para quase todas os grupos, é mais provável a internação de um paciente que porte doença pré-existente. A única exceção foi para o DISEASE GROUPING 6.bit_length
 
-**O grupo de doenças que apresentou maior relação com casos de internação foi o DISEASE GROUPING 4, no qual um paciente que se enquadre neste perfil de doenças tem quase o dobro de chances de ser internado**.
+O grupo de doenças que apresentou maior relação com casos de internação foi o DISEASE GROUPING 4, no qual um paciente que se enquadre neste perfil de doenças tem quase o dobro de chances de ser internado.
 
 # Modelagem de Machine Learning
 
