@@ -176,4 +176,53 @@ Os modelos selecionados estão, em sua maioria, presentes na biblioteca `scikit-
 após o treino realizamos teste do modelo e comparamos suas acurácias, que é a porcentagem de classificações acertadas no teste, sendo nossa primeira métrica para mensurar os modelos.
 
 Os modelos testados inicialmente são:
-> LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, SVC, LinearSVC
+> LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, SVC, LinearSVC, RandomForestClassifier e LogisticRegression
+
+
+Os modelos de melhor performance nos testes iniciais foram:
+ 
+- RandomForestClassifier
+- LogisticRegression
+- GradientBoostingClassifier
+- XGBClassifier
+ 
+Os modelos foram testados e observados sob a métrica AUC. Os resultados abaixo foram obtidos:
+```
+Modelo RandomForestClassifier
+AUC médio 0.8006408925791384
+--------------
+Modelo LogisticRegression
+AUC médio 0.7739854696419305
+--------------
+Modelo GradientBoostingClassifier
+AUC médio 0.788365334717177
+--------------
+Modelo XGBClassifier
+AUC médio 0.786533471717696
+```
+
+Os testes foram realizados utilizando processo iterativo de treinamento de vários modelos, cálculo da performance de cada um e ao final obtida a média de todos.
+
+Após estes resultados, os modelos `RandomForestClassifier` e `XGBClassifier` foram selecionados para seguir adiante.
+
+## Tuning do modelo
+
+Os modelos testados até agora foram na sua forma mais pura, sem ajustes nos seus parâmetros internos, os hiperparâmetros.
+São diversos parâmetros que variam para cada tipo de modelo. E para cada parâmetro existe um intervalo de valores possíveis. Dito isto, o ajuste e teste iterativo de cada hiperparâmetro manualmente tomaria um tempo impraticável.
+
+Para evitar o tuning manual, foram utilizados os processos de exploração de configurações de hiperparâmetros `RandomizedSearchCV` e `GridSearchCV`. Combinando ambos, podemos explorar diversas combinações de ajustes aleatoriamente dentro de intervalos definidos por nós. O número ďe tentativas é definido também para tomar o tempo que o usuário achar necessário. No nosso caso o processo foi realizado em 100 tentativas de ajustes diferentes.
+Após a busca aleatória, temos uma dica dos melhores ajustes encontrados na busca, devido ao teste de performance que é realizado durante o processo automaticamente.
+
+Essa busca do melhor ajuste foi realizado para os dois modelos selecionados anteriormente e os ajustes do melhor modelo foram os seguintes:
+
+Para o `RandomForestClassifier`:
+
+```
+{'bootstrap': False,
+ 'max_depth': 50,
+ 'max_features': 'auto',
+ 'max_samples': 0.2,
+ 'min_samples_leaf': 4,
+ 'min_samples_split': 20,
+ 'n_estimators': 3000}
+```
