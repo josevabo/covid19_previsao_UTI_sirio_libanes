@@ -1,6 +1,12 @@
 # Previsão de internações por COVID19 - Hospital Sírio Libanês
 ![banner hospital](https://github.com/josevabo/covid19_previsao_UTI_sirio_libanes/blob/main/images/banner_hospital_2.jpg?raw=true)
 
+# Objetivo
+
+Este projeto se trata de um trabalho de conclusão do Bootcamp Data Science da Alura 2021. O tema proposto pelos instrutores do curso foi de atender a um desafio no site kaggle.com para uso se Machine Learning na predição de internação de pacientes com suspeita de Covid19.
+
+Abaixo será apresentado o contexto e todo trabalho desenvolvido que está disponível no notebook presente neste repositório.
+
 # Contexto: Pandemia e ações necessárias
 
 Em 2020 o mundo foi surpreendido por uma nova pandemia. A COVID19 em pouco tempo mudou a vida de todos no mundo todo. Pessoas e empresas precisaram se mobilizar para encarar todas as mudanças e restrições que o combate à pandemia nos impôs.
@@ -41,6 +47,7 @@ Os dados presentes no dataset contém registros anonimizados de pacientes que de
 Os dados já passaram por uma limpeza inicial e normalização pela equipe do Hospital, apresentando valores de -1 a 1, nos campos que permitem normalização deste tipo.
 
 ## Estrutura do Dataset:
+
 São 1925 registros, com 231 colunas.
 
  PACIENT_VISIT_IDENTIFIER | ... | WINDOW | ICU
@@ -79,45 +86,35 @@ O arquivo contendo os dados utilizados neste projeto se encontra no repositório
 
 # Limpeza dos dados
 
-Abaixo, com o auxílio das funções definidas nas células acima, são realizadas algumas etapas para limpeza dos dados iniciais que garantirão uma melhor normalização dos dados para posterior uso como dados de treino de um modelo de Machine Learning:
+Os dados passaram por processos de limpeza conforme as etapas abaixo para garantir uma melhor normalização para posterior uso como dados de treino de um modelo de Machine Learning:
 
-- **Preenchimento de campos vazios com dados próximos existentes para as features contínuas**
-  - Para um treino adequado de um modelo de ML, é importante que não haja dados distorcidos no meio do dataset. Uma distorção que pode ocorrer é a existência de campos vazios. Em alguns casos esses dados nulos podem não ser bem interpretados no treino do modelo. Preencher campos numéricos com 0 nem sempre é a melhor opção, pois dependendo da natureza da feature, o valor zero ocupando um registro antes vazio entre valores positivos ou negativos já preenchidos anteriormente pode levar a um entendimento incorreto do cenário que esses dados em conjunto venham a mostrar.
-  - Diante disso, a estratégia aqui adotada é a de **replicar nos campos vazios das features contínuas os dados já presentes nos registros próximos da mesma coluna**. A atenção especial com as features contínuas nesse caso se deve ao fato delas representarem no nosso dataset o intervalo de dados que representam resultados de exames e sinais vitais, podendo ser substituidas pelo valor coletado na janela seguinte ou anterior. 
-  - Um cuidado importante nesta estratégia é evitar replicar dados de contextos completamente diferentes para preencher um dado vazio. Para evitar isso, primeiro agrupamos os registros pelo identificador do paciente e depois aplicar a replicação de dados próximos para os campos vazios. Assim evitamos que a o dado de frequência cardíaca vazio de um paciente "A" seja preenchido com o dado coletado para o paciente "B", por exemplo.
-  - Isto é possível usando o método `fillna` da biblioteca pandas após o agrupamento. Este método nos permite preencher campos vazios, entre outras formas, replicando o mesmo valor presente no registro seguinte na mesma coluna, ou replicar o valor do registro anterior.
+- Preenchimento de campos vazios com dados próximos existentes para as features contínuas**
 
-- **Remoção dos registros dos pacientes que possuem marcação de encaminhamento para UTI já na primeira janela (0-2)**
-  - Seguindo recomendação da própria equipe que preparou os dados iniciais e o desafio no Kaggle, dados que possam ter sido coletados após o encaminhamento do paciente para UTI não devem ser utilizados para treino. Pois o objetivo é prever pacientes que possivelmente irão para UTI considerando os dados coletados antes que o evento ingresso em UTI ocorra.
+- Remoção dos registros dos pacientes que possuem marcação de encaminhamento para UTI já na primeira janela (0-2)
   
-- **Eliminar linhas que ainda possuem dados vazios**
-  - Se após as etapas anteriores algum registro de paciente ainda possuir campos vazios, esta linha será eliminada para evitar uma distorção na hora do treino.
+- Eliminar linhas que ainda possuem dados vazios
 
-- **Manter apenas os dados da primeira janela (0 - 2 horas) e marcar os registros que resultaram em encaminhamento à UTI.**
-  - Como o objetivo é um modelo que seja capaz de prever o quanto antes o risco de internação de um paciente, o ideal é termos um modelo capaz de já enxergar esse risco nas primeiras horas.
-  - Para o correto treino do modelo, o paciente que acabou sendo encaminhado à UTI será marcado como ICU=1 no dataset. E todo dataset se tratará apenas de registros da primeira janela dos pacientes.
+- Manter apenas os dados da primeira janela (0 - 2 horas) e marcar os registros que resultaram em encaminhamento à UTI.
 
-- **Conversão da coluna AGE_PERCENTIL em dados categóricos**
-  - A coluna AGE_PERCENTIL apresenta uma informação que pode ser relevante e interessante para ser mantida nos dados de treino: a faixa etária do paciente. O problema é que os dados desta coluna são apresentados como texto ("60th","80th", etc), e dados textuais não conseguem ser usados como features em modelos de regressão, por exemplo. Para isso transformamos as categorias de faixas etárias apresentadas em texto para categorias numéricas usando o método `astype('category')` do pandas.
+- Conversão da coluna AGE_PERCENTIL em dados categóricos
 
 ## Remoção de features/colunas altamente correlacionadas
 
+Correlação indica a "semelhança" entre duas variáveis. Dados altamente correlacionados podem indicar uma redundância de features em nosso treino, por isso decidimos remover features que apresentem essa característica quando comparadas a outras.
+
 Para definir uma linha de corte entre o que é alta correlação e não é desejada em nossos dados, e o que não é e pode ser mantida na base, **determinamos o valor limite para correlação como 0.95 **(de um limite teórico de 1).
 
-Abaixo transformaremos os dados de forma que quaisquer colunas que tenham um coeficiente de correlação maior que 0.95 sejam eliminados do dataset.
-
-Porém, se adotarmos o processo descrito acima, não eliminaremos somente as possíveis "duplicatas", mas também os dados de referência aos quais comparávamos a segunda coluna para identificar a alta correlação. Ou seja, se uma coluna que apresenta dados de frequência cardíaca demonstra alta correlação com a coluna de pressão sanguínea, as duas tem alta correlação entre si, portanto sendo excluídas se apenas considerarmos as colunas que apresentarem correlação maior que 0.95. Mas essa abordagem elimina dados que podem ser importantes. O procedimento adequado é eliminar apenas uma das colunas, assim reduzindo a possível ambiguidade.
-
+A partir desse valor executamos um processo de limpeza que eliminou mais de 100 colunas que tinham alta correlação com outras que foram mantidas.
 
 ![Gráfico de correlação](https://github.com/josevabo/covid19_previsao_UTI_sirio_libanes/blob/main/images/graf_corr.jpg?raw=true)
 
-Na imagem acima fica mais claro o exemplo anterior. Quando verificamos um ponto na matriz que indique correlação maior que 0.95 (seta amarela), este ponto faz referência a duas features (setas vermelhas). Ao eliminarmos apenas uma das duas features, já estamos removendo a alta correlação do dataset.
-
-Para realizar esta remoção, utilizaremos de uma função que percorre a matriz de correlação analisando seus valores, onde houver valor maior que 0.95 a feature referente à coluna da matriz será eliminada, dessa forma a feature representada pela linha da matriz onde o ponto se encontra é mantida. Dessa forma, quando duas features forem identificadas como altamente correlacionadas, apenas uma delas será eliminada do conjunto de dados.
+O gráfico acima mostra a matriz de correlação que utilizamos para visualizar de maneira mais intuitiva a correlação entre features em nossos dados. Quanto mais vermelho, maior a correlação. As setas mostram como um ponto no gráfico faz referência a duas features que estão sendo cruzadas.
 
 # Exploração dos dados após limpeza
 
-Após a limpeza inicial e eliminação de features altamente correlacionadas, vamos observar algumas features mais livremente para vermos se conseguimos algum conhecimento maior na relação do problema com os nossos dados.
+Após a limpeza inicial, analisamos algumas features mais livremente para vermos se conseguimos algum conhecimento maior na relação do problema com os nossos dados.
+
+Para facilitar as análises montamos visualizações para cada contexto avaliado.
 
 ### Taxa de internação por faixa etária (faixas de 10 em 10 anos).
 
